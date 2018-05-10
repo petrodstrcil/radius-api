@@ -1,0 +1,42 @@
+{
+  "name": "radius-api",
+  "version": "1.0.0",
+  "description": "API for radius server",
+  "author": "Petr Odstrcil",
+  "license": "AGPL-3.0-only",
+  "main": "server.js",
+  "private": true,
+  "repository": {
+    "url": "https://github.com/petrodstrcil/radius-api.git",
+    "type": "git"
+  },
+  "scripts": {
+    "test": "SET NODE_ENV=test&& mocha --exit",
+    "test1": "mocha --timeout 10000",
+    "start": "node server.js",
+    "devstart": "nodemon start",
+    "dev": "NODE_ENV=test && nodemon server.js"
+  },
+
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "config": "^1.30.0",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "express-ntlm": "^2.3.0",
+    "express-promise-router": "^3.0.2",
+    "http-errors": "~1.6.2",
+    "morgan": "~1.9.0",
+    "morgan-body": "^2.4.0",
+    "pg-monitor": "^1.0.0",
+    "pg-promise": "^8.4.3",
+    "version": "^0.1.2"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "eslint": "^4.19.1",
+    "supertest": "^3.0.0"
+  }
+}
