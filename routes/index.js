@@ -18,7 +18,7 @@ module.exports = (app) => {
 // loop through all routes and dynamically require them – passing api
 //fs.readdirSync(path.join(__dirname, 'routes')).map(file => {
 
-const exludeRoute = ['index', 'radreply1', 'radreply2'];
+const exludeRoute = ['index', 'action'];
 
 module.exports = (app) => {   
     fs.readdirSync(path.join(__dirname, '')).map(file => {

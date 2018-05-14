@@ -1,64 +1,48 @@
 'use strict';
 
-var router = require('express-promise-router')(),
-    db = require('../db/index.js');
+const router = require('express-promise-router')();
+const db = require('../db/index.js');
+const action = require('./action');
 
-
-let sql = {
+const  sql = {
     delete: 'DELETE FROM radreply WHERE id = $1 RETURNING id',
-    update: 'UPDATE radreply SET username=$1, attribute=$2, op=$3, value=$4 WHERE id=$5 RETURNING id',
-    insert: 'INSERT INTO radreply(username, attribute, op, value) VALUES (${username}, ${attribute}, ${op}, ${value})',
+    update: 'UPDATE radreply SET username=${username}, attribute=${attribute}, op=${op}, value=${value} WHERE id=${id} RETURNING id',
+    insert: 'INSERT INTO radreply(username, attribute, op, value) VALUES (${username}, ${attribute}, ${op}, ${value}) RETURNING id',
     findById: 'SELECT * FROM radreply WHERE id = $1',
     findByUserName: 'SELECT * FROM radreply WHERE username = $1'
 }
 
-let dbSQL = {
-    delete: (id) => { return db.result(sql.delete, +id, r => r.rowCount);},
-    update: (id, values) => {return db.result(sql.update, [...values, +id]);},
-    insert: (values) => { return db.result(sql.insert, values); }, 
-    findById: (id) => { return db.oneOrNone(sql.findById, +id); },
-    findByUserName: (username) => { return db.manyOrNone(sql.findByUserName, username); },
+const dbSQL = {
+    delete: (id) => { return db.result(sql.delete, +id) },
+    update: (id, values) => { return db.result(sql.update, Object.assign(values, {id: +id})) },
+    insert: (values) => { return db.result(sql.insert, values) }, 
+    findById: (id) => { return db.result(sql.findById, +id) },
+    findByUserName: (username) => { return db.result(sql.findByUserName, username) },
 }
 
 
 router.get('/id/:id([0-9]+)', async (req, res) => {
-    let id = req.params.id;
-    //let data = await db.oneOrNone('select * from radreply where id = $1', id);
-    let data = await dbSQL.findById(id);
-    res.send( data );
+    const id = req.params.id;
+    await action.selectOne(res, dbSQL.findById(id), id);
 });
 
 router.get('/username/:username', async (req, res) => {
-    let username = req.params.username;
-    let data = await dbSQL.findByUserName(username);
-    res.send( data );
+    const username = req.params.username;
+    await action.selectMany(res, dbSQL.findByUserName(username), username);
 });
 
-router.post('/', async (req, res) => {
-    let data = await dbSQL.insert(req.body);
-    res.status(201).json( { status: 'success', message: 'Inserted one row' } );
-    //console.log(data);
-    //res.status(201).json( data );
-    //res.send( data );
-});
-
-//patch
-router.patch('/id/:id([0-9]+)', (req, res) => {
-    let id = parseInt(req.params.id);
-    //console.log('PETR', id);
-    //res.send('OK');
+router.post('/', async (req, res, next) => {
+    await action.insertOne(res, dbSQL.insert(req.body));
 });
 
 router.put('/id/:id([0-9]+)', async (req, res) => {
-    let id = parseInt(req.params.id);
-    let data = await dbSQL.update( [req.body.username, req.body.attribute, req.body.op, req.body.value], +id);
-    res.send( data );        
+    const id = parseInt(req.params.id);
+    await action.updateOne(res, dbSQL.update(+id, req.body));
 });    
 
 router.delete('/id/:id([0-9]+)', async (req, res) => {
-    let id = parseInt(req.params.id);
-    let data = await dbSQL.delete(id);
-    res.send( data );  
+    const id = parseInt(req.params.id);
+    await action.deleteOne(res, dbSQL.delete(id), id);
 });
 
 module.exports = router;
