@@ -53,15 +53,15 @@ module.exports = {
 
     insertOne: async (res, action) => {
         const data = await action;
-        const id = data.rows[0].id;
         switch (data.rowCount) {
             case 0:
             res.status(404).send({ 
-                    status: status.notfound,
-                    message: `Row with '${id}' not founded`
+                    status: status.error,
+                    message: `The item hasn't been inserted`
                 });
                 break;
             case 1:
+                const id = data.rows[0].id;
                 res.send({ 
                     status: status.sucess,
                     message: `Inseted row with ID ${id}`
