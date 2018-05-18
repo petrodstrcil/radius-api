@@ -1,0 +1,276 @@
+swagger: '3.0'
+
+info:
+  description: This is a documnet for radius-api 
+  version: 1.0.0
+  title: Swagger radius-api
+  specification: https://swagger.io/specification
+
+schemes:
+ - https
+
+tags:
+- name: radreply
+  description: Operations about radreply
+
+#host: 'https://localhost:8010/radius-api'
+basePath: '/radius-api'
+
+
+paths:
+  /radreply/id/{id}:
+  
+    get:
+      tags:
+      - radreply
+      summary: Find row by ID
+      description: For valid response try integer IDs with value >= 1. Other values will generated exceptions
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: id
+        in: path
+        description: ID of radreply that needs to be fetched
+        required: true
+        type: integer
+        minimum: 1.0
+        format: int64
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radreply'
+        404:
+          description: Row not found      
+        500:
+          description: An unexpected error occurred
+          
+    put:
+      tags:
+      - radreply
+      summary: Update an existing row
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of radreply that needs to be updated
+        required: true
+        type: integer
+        minimum: 1.0
+        format: int64
+      - name: body        
+        in: body
+        description: Updated radreply object
+        required: true        
+        schema:
+          $ref: '#/definitions/radreply'        
+      responses:
+        200:
+          description: Inseted row with ID ${id}
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        404:
+          description: Row with ${id} not founded
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        500:
+          description: An unexpected error occurred
+
+    delete:
+      tags:
+      - radreply
+      summary: delete radreply by id
+      consumes:
+      - application/x-www-form-urlencoded
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        description: ID of row that needs to be updated
+        required: true
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        404:
+          description: Row with ${id} not founded
+          schema:
+            $ref: '#/definitions/ApiResponse'
+
+
+  /radreply/username/{username}:
+    get:
+      tags:
+      - radreply
+      summary: Find rows by username
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: username
+        in: path
+        description: username (case sensitive) of radreply that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radreply'
+        404:
+          description: Row not found      
+
+  /radreply:
+    post:
+      tags:
+      - radreply
+      summary: Create row to radreply
+      produces:
+      - application/xml
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Created radreply object
+        required: true
+        schema:
+          $ref: '#/definitions/radreply'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radreply'          
+
+  /users/search/username/{username}:      
+    get:
+      tags:
+      - users
+      summary: Serach username on table users
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: username
+        in: path
+        description: username (case sensitive) of users that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/users'
+        404:
+          description: Row not found   
+  
+  /users/search/ip/{ip}:
+    get:
+      tags:
+      - users
+      summary: Serach ip on table users or radreply
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: ip
+        in: path
+        description: ip that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/users'
+        404:
+          description: Row not found         
+          
+definitions:
+  radreply:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      username:
+        type: string
+      attribute: 
+        type: string
+        example: IP
+      op: 
+        type: string
+        enum:
+         - '=='
+         - '<>'
+      value: 
+        type: string
+        example: 10.20.30.40 
+    xml:
+      name: radreply
+      
+  users:
+    type: object
+    properties:
+      username:
+        type: string
+      userpassword:
+        type: string
+      status: 
+        type: string
+      provideridentification:
+        type: string
+      ipaddresstype:
+        type: string
+      accesstype:
+        type: string
+      servicecode:
+        type: string
+      routedipaddressamount:
+          type: integer
+      iproutedrange:
+        type: string
+      ipaddress:
+        type: string
+      framedpoolid:
+        type: string
+      provisioningsource:
+        type: string
+      usercreation:
+        type: string
+        format: ''
+      connectivityid:
+        type: string
+      endpointipaddress:
+        type: string
+      routediprange:
+        type: array
+        items:
+          type: string
+      requestsource:
+        type: string
+    example:
+      useranme: 'VF-'
+      staus: 'ACTIVE'
+      provideridentification: 'CETIN'
+      ipaddresstype: 'STATIC'
+        
+  ApiResponse:
+    type: object
+    properties:
+      status:
+        type: string
+        format: int32
+      message:
+        type: string
+      data:
+        type: object
+
+
