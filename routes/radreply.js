@@ -4,6 +4,8 @@ const router = require('express-promise-router')();
 const db = require('../db/index.js');
 const action = require('./action');
 
+module.exports = router;
+
 const  sql = {
     delete: 'DELETE FROM radreply WHERE id = $1 RETURNING id',
     update: 'UPDATE radreply SET username=${username}, attribute=${attribute}, op=${op}, value=${value} WHERE id=${id} RETURNING id',
@@ -20,11 +22,31 @@ const dbSQL = {
     findByUserName: (username) => { return db.result(sql.findByUserName, username) },
 }
 
+/*router.param('id', function (req, res, next, id) {
+    req.id = parseInt(req.params.id);
+    console.log(req.id);
+    next();
+});*/
 
-router.get('/id/:id([0-9]+)', async (req, res) => {
+router.route('/id/:id([0-9]+)')
+    .get(async (req, res) => {
+        const id = parseInt(req.params.id);
+        await action.selectOne(res, dbSQL.findById(id), id);
+    })
+    .put(async (req, res) => {
+        const id = parseInt(req.params.id);
+        await action.updateOne(res, dbSQL.update(+id, req.body));
+    })
+    .delete(async (req, res) => {
+        const id = parseInt(req.params.id);
+        await action.deleteOne(res, dbSQL.delete(id), id);
+    })
+
+
+/*router.get('/id/:id([0-9]+)', async (req, res) => {
     const id = req.params.id;
     await action.selectOne(res, dbSQL.findById(id), id);
-});
+});*/
 
 router.get('/username/:username', async (req, res) => {
     const username = req.params.username;
@@ -35,14 +57,12 @@ router.post('/', async (req, res, next) => {
     await action.insertOne(res, dbSQL.insert(req.body));
 });
 
-router.put('/id/:id([0-9]+)', async (req, res) => {
+/*router.put('/id/:id([0-9]+)', async (req, res) => {
     const id = parseInt(req.params.id);
     await action.updateOne(res, dbSQL.update(+id, req.body));
-});    
+});*/
 
-router.delete('/id/:id([0-9]+)', async (req, res) => {
+/*router.delete('/id/:id([0-9]+)', async (req, res) => {
     const id = parseInt(req.params.id);
     await action.deleteOne(res, dbSQL.delete(id), id);
-});
-
-module.exports = router;
+});*/
