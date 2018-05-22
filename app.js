@@ -1,7 +1,7 @@
 /*!
  * radius-api
  * Copyright(c) 2016 Petr Odstrcil
- * MIT Licensed
+ * AGPL 3.0 Licensed
  */
 
  'use strict';
@@ -11,33 +11,63 @@
  * @private
  */
 
-var createError = require('http-errors'),
-    express = require('express'),
-    //ntlm = require('express-ntlm'),
-    path = require('path'),
-    //logger = require('morgan'),
-    //bodyParser = require('body-parser'),
+const createError = require('http-errors');
+const express = require('express');
+//const logger = require('morgan');
+//const ntlm = require('express-ntlm');
+const path = require('path');
+const morganBody = require('morgan-body');
+const config = require('config');
+const url = require('url');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
 
-    morganBody = require('morgan-body'),
-    config = require('config'),
-    url = require('url');
-    //url = require('url').parse(config.server.url); 
+const app = express();
 
-(config) => { 
-    console.log(config);      
-}
-
-var app = express();
+const expressSwagger = require('express-swagger-generator')(app);
 
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'ejs');
 
 //app.use(logger('combined'));
+
+
+// See the react auth blog in which cors is required for access
+app.use((req, res, next) => {
+    //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-type,Authorization');
+    next();
+});
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));//?? or true
-//app.use(bodyParser.json); //??
-//app.use(express.static(path.join(__dirname, 'public')));
+
+
+let options = {
+    swaggerDefinition: {
+        info: {
+            description: 'This is a sample server',
+            title: 'Swagger',
+            version: '1.0.0',
+        },
+        host: 'https://localhost:8000',
+        basePath: '/radius-api',
+        produces: [
+            "application/json",
+            "application/xml"
+        ],
+        schemes: ['https']
+    },
+    basedir: __dirname, //app absolute path
+    files: ['./routes/**/*.js'] //Path to the API handle folder
+};
+expressSwagger(options);
+
+app.use('/radius-api/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+//app.use('/radius-api/api/v1', router);
 
 
 if (app.get('env') !== 'test') {
@@ -52,7 +82,18 @@ if (app.get('env') !== 'test') {
     });
 }
 
+// GET method route
+app.get('/', function (req, res) {
+    res.send('GET request to the homepage')
+})
+
+app.use('/radius-api/login', require('./routes/login'));
+
+app.use('/radius-api/*', require('./auth'));
 require('./routes')(app);
+
+
+
 
 //var radreplyRouter = require('./routes/radreply');
 //app.use('/radius-api/radreply', radreplyRouter );

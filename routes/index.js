@@ -18,7 +18,7 @@ module.exports = (app) => {
 // loop through all routes and dynamically require them – passing api
 //fs.readdirSync(path.join(__dirname, 'routes')).map(file => {
 
-const exludeRoute = ['index', 'action'];
+const exludeRoute = ['index', 'action', 'api-docs', 'login'];
 
 module.exports = (app) => {   
     fs.readdirSync(path.join(__dirname, '')).map(file => {
