@@ -23,7 +23,7 @@
     "config": "^1.30.0",
     "debug": "~2.6.9",
     "express": "~4.16.0",
-    "express-ntlm": "^2.3.0",
+    "express-basic-auth": "^1.1.5",
     "express-promise-router": "^3.0.2",
     "express-swagger-generator": "^1.1.1",
     "http-errors": "~1.6.2",
@@ -31,6 +31,7 @@
     "morgan-body": "^2.4.0",
     "pg-monitor": "^1.0.0",
     "pg-promise": "^8.4.4",
+    "swagger-jsdoc": "^1.9.7",
     "swagger-ui-express": "latest",
     "version": "^0.1.2",
     "yamljs": "^0.3.0"

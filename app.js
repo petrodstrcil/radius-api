@@ -11,27 +11,22 @@
  * @private
  */
 
-var createError = require('http-errors'),
-    express = require('express'),
-    //ntlm = require('express-ntlm'),
-    path = require('path'),
-    //logger = require('morgan'),
-    //bodyParser = require('body-parser'),
+const createError = require('http-errors');
+const express = require('express');
+const morganBody = require('morgan-body');
 
-    morganBody = require('morgan-body'),
-    config = require('config'),
-    url = require('url');
-    //url = require('url').parse(config.server.url); 
+const path = require('path');
+const url = require('url');
 
-(config) => { 
-    console.log(config);      
-}
+//logger = require('morgan'),
+//bodyParser = require('body-parser'),
+
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
+
 
 var app = express();
-
-// view engine setup
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'ejs');
 
 //app.use(logger('combined'));
 app.use(express.json());
@@ -39,6 +34,9 @@ app.use(express.urlencoded({ extended: true }));//?? or true
 //app.use(bodyParser.json); //??
 //app.use(express.static(path.join(__dirname, 'public')));
 
+
+app.use('/radius-api/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+require('./swagger/docs.js')(app);
 
 if (app.get('env') !== 'test') {
     morganBody(app, {
@@ -52,34 +50,8 @@ if (app.get('env') !== 'test') {
     });
 }
 
+app.use('/radius-api', require('./basic-auth'));
 require('./routes')(app);
-
-//var radreplyRouter = require('./routes/radreply');
-//app.use('/radius-api/radreply', radreplyRouter );
-//var indexRouter = require('./routes/index')(app);
-
-/*NTLM*/
-/*app.use(ntlm({
-    function() {
-        var args = Array.prototype.slice.apply(arguments);
-        console.log.apply(null, args);
-    },
-    domain: 'MYDOMAIN',
-    //domaincontroller: 'ldap://myad.example',
-
-    // use different port (default: 389)
-    // domaincontroller: 'ldap://myad.example:3899',
-}));*/
-//const { URL } = require('url');
-//console.log(url.parse(config.server.url).path);
-//console.log(new URL('/page.html',  '/chrome://settings/').href);
-  // Prints 'chrome://settings/page.html'
-  
-//const routePath = URL.pathname; 
-//console.log(routePath + '/radreply');
-//app.use( routePath + '/radreply', radreplyRouter );
-
-//app.use('/', indexRouter);
 
 
 // catch 404 and forward to error handler
