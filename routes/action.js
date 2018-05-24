@@ -13,7 +13,7 @@ module.exports = {
                 break;
             case 1:
                 res.send({ 
-                    status: status.sucess,
+                    status: status.success,
                     message: 'Deleted row', data: data.rows[0].id
                 });
                 break;
@@ -38,7 +38,7 @@ module.exports = {
             case 1:
                 res.send({
                     message: 'The data has been changed',
-                    status: status.sucess,
+                    status: status.success,
                     data: data.rows[0]
                 });
                 break;
@@ -63,7 +63,7 @@ module.exports = {
             case 1:
                 const id = data.rows[0].id;
                 res.send({ 
-                    status: status.sucess,
+                    status: status.success,
                     message: `Inseted row with ID ${id}`
                 });
                 break;
@@ -87,9 +87,10 @@ module.exports = {
                 break;
             case 1:
                 res.send({
-                    status: status.sucess, 
+                    status: status.success, 
                     message: `Selected row with '${id}'`,
-                    data: data.rows[0]
+                    //data: data.rows[0]
+                    data: data.rows
                 });
                 break;
             default:
@@ -112,8 +113,9 @@ module.exports = {
                 break;
             default:
                 res.send({ 
-                    status: status.sucess,
-                    message: `Selected rows where '${id}'`, data: data.rows
+                    status: status.success,
+                    message: `Selected rows where '${id}'`,
+                    data: data.rows
                 });
                 break;
         }
@@ -121,7 +123,7 @@ module.exports = {
 }
 
 const status = {
-    sucess: 'sucess',
-    notfound: 'not founded',
-    error: 'error'
+    success: 'Success',
+    notfound: 'Not founded',
+    error: 'Error'
 }
