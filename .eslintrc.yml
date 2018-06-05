@@ -1,0 +1,31 @@
+env:
+  es6: true
+  node: true
+  mocha: true
+extends: 'eslint:recommended'
+#extends: 'standard'
+#plugins:
+# - mocha
+# - standard
+# - promise
+parserOptions:
+  sourceType: module
+  ecmaVersion: 8
+  #ecmaFeatures:
+  #  experimentalObjectRestSpread: true
+rules:
+  no-console:
+    - off
+  indent:
+    - off
+    - tab
+  linebreak-style:
+    - error
+    - windows
+  quotes:
+    - error
+    - single
+  semi:
+    - off
+    - error
+    - never
