@@ -18,9 +18,31 @@ module.exports = (app) => {
 // loop through all routes and dynamically require them – passing api
 //fs.readdirSync(path.join(__dirname, 'routes')).map(file => {
 
-const exludeRoute = ['index', 'action'];
+const exludeRoute = ['index', 'action', 'api-docs'];
 
-module.exports = (app) => {   
+/*module.exports = (req, res, next) => {
+    fs.readdirSync(path.join(__dirname, '')).map(file => {
+        var routeName = path.parse(file).name;
+        if (!exludeRoute.includes(routeName)) {
+        //if (routeName !== 'index') {
+            
+            var routePath = URL.pathname; 
+
+            //require('./routes/' + file)(api);
+            //console.log(file);
+            console.log('Register route: ', `${routePath}/${routeName}`);
+            //console.log(path.join(__dirname, file));
+
+            app.use(
+                  `${routePath}/${routeName}`
+                , require(path.join(__dirname, file))
+            );
+        }
+    });    
+    next();
+}*/
+
+/*module.exports = (app) => {   
     fs.readdirSync(path.join(__dirname, '')).map(file => {
         var routeName = path.parse(file).name;
         if (!exludeRoute.includes(routeName)) {
@@ -39,4 +61,25 @@ module.exports = (app) => {
             );
         }
     });
-};    
+};*/
+
+const routePath = URL.pathname; 
+
+module.exports = async (app) => {   
+    await fs.readdirSync(path.join(__dirname, '')).map(file => {
+        var routeName = path.parse(file).name;
+        if (!exludeRoute.includes(routeName)) {
+        //if (routeName !== 'index') {
+
+            //require('./routes/' + file)(api);
+            //console.log(file);
+            console.log('Register route: ', `${routePath}/${routeName}`);
+            //console.log(path.join(__dirname, file));
+
+            app.use(
+                  `${routePath}/${routeName}`
+                , require(path.join(__dirname, file))
+            );
+        }
+    });
+};

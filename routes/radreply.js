@@ -28,6 +28,36 @@ const dbSQL = {
     next();
 });*/
 
+ /**
+   * @swagger
+   * /radreply/id/{id}:
+   * get:
+   *  tags:
+   *  - radreply
+   *  summary: Find row by ID
+   *  description: For valid response try integer IDs with value >= 1. Other values will generated exceptions
+   *  produces:
+   *  - application/json
+   *  - application/xml
+   *  parameters:
+   *  - name: id
+   *    in: path
+   *    description: ID of radreply that needs to be fetched
+   *    required: true
+   *    type: integer
+   *    minimum: 1.0
+   *    format: int64
+   *  responses:
+   *    200:
+   *      description: Successful operation
+   *      schema:
+   *        $ref: '#/definitions/radreply'
+   *    404:
+   *      description: Row not found      
+   *    500:
+   *      description: An unexpected error occurred
+   *       
+   */
 router.route('/id/:id([0-9]+)')
     .get(async (req, res) => {
         const id = parseInt(req.params.id);
@@ -53,7 +83,7 @@ router.get('/username/:username', async (req, res) => {
     await action.selectMany(res, dbSQL.findByUserName(username), username);
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
     await action.insertOne(res, dbSQL.insert(req.body));
 });
 

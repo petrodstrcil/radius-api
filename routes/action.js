@@ -20,7 +20,7 @@ module.exports = {
             default:
                 res.status(500).send({ 
                     status: status.error,
-                    message: `An unexpected error occurred`
+                    message: 'An unexpected error occurred'
                 });
                 break;
         }
@@ -45,7 +45,7 @@ module.exports = {
             default:
                 res.status(500).send({ 
                     status: status.error,
-                    message: `An unexpected error occurred`
+                    message: 'An unexpected error occurred'
                 });
                 break;
         }
@@ -53,24 +53,24 @@ module.exports = {
 
     insertOne: async (res, action) => {
         const data = await action;
+        const { id } = data.rows[0];
         switch (data.rowCount) {
             case 0:
             res.status(404).send({ 
                     status: status.error,
-                    message: `The item hasn't been inserted`
+                    message: 'The item hasn\'t been inserted'
                 });
                 break;
             case 1:
-                const id = data.rows[0].id;
                 res.send({ 
                     status: status.success,
-                    message: `Inseted row with ID ${id}`
+                    message: `Inseted row with '${id}'`
                 });
                 break;
             default:
                 res.status(500).send( { 
                     status: status.error,
-                    message: `An unexpected error occurred`
+                    message: 'An unexpected error occurred'
                 });
                 break;
         }
@@ -96,7 +96,7 @@ module.exports = {
             default:
                 res.status(500).send({ 
                     status: status.error,
-                    message: `An unexpected error occurred`
+                    message: 'An unexpected error occurred'
                 });
                 break;
         }

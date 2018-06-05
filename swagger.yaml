@@ -1,33 +1,43 @@
-swagger: '3.0'
+swagger: '2.0'
 
 info:
   description: This is a documnet for radius-api 
-  version: 1.0.0
+  version: 2.0.0
   title: Swagger radius-api
   specification: https://swagger.io/specification
 
 schemes:
  - https
 
+servers:
+- url: https://localhost:8000/radius-api/
+  description: Development server
+- url: https://{subdomain}/{version}
+
 tags:
 - name: radreply
   description: Operations about radreply
+- name: users  
+
 
 #host: 'https://localhost:8010/radius-api'
 basePath: '/radius-api'
 
+produces:
+  - application/json
 
 paths:
+  #            
+  # Router radreply
+  #            
   /radreply/id/{id}:
-  
+    schema:
+      $ref: '#/definitions/radreply'  
     get:
       tags:
       - radreply
       summary: Find row by ID
       description: For valid response try integer IDs with value >= 1. Other values will generated exceptions
-      produces:
-      - application/json
-      - application/xml
       parameters:
       - name: id
         in: path
@@ -40,19 +50,15 @@ paths:
         200:
           description: Successful operation
           schema:
-            $ref: '#/definitions/radreply'
+            $ref: '#/definitions/ApiResponse'  
         404:
           description: Row not found      
         500:
           description: An unexpected error occurred
-          
     put:
       tags:
       - radreply
       summary: Update an existing row
-      produces:
-      - application/xml
-      - application/json
       parameters:
       - name: id
         in: path
@@ -78,16 +84,12 @@ paths:
             $ref: '#/definitions/ApiResponse'
         500:
           description: An unexpected error occurred
-
     delete:
       tags:
       - radreply
       summary: delete radreply by id
       consumes:
       - application/x-www-form-urlencoded
-      produces:
-      - application/xml
-      - application/json
       parameters:
       - name: id
         in: path
@@ -105,15 +107,11 @@ paths:
           schema:
             $ref: '#/definitions/ApiResponse'
 
-
   /radreply/username/{username}:
     get:
       tags:
       - radreply
       summary: Find rows by username
-      produces:
-      - application/json
-      - application/xml
       parameters:
       - name: username
         in: path
@@ -133,9 +131,6 @@ paths:
       tags:
       - radreply
       summary: Create row to radreply
-      produces:
-      - application/xml
-      - application/json
       parameters:
       - in: body
         name: body
@@ -148,15 +143,200 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/radreply'          
+  #            
+  # Router radcheck
+  #            
+  /radcheck/id/{id}:
+    get:
+      tags:
+      - radcheck
+      summary: Find row by ID
+      description: For valid response try integer IDs with value >= 1. Other values will generated exceptions
+      parameters:
+      - name: id
+        in: path
+        description: ID of radcheck that needs to be fetched
+        required: true
+        type: integer
+        minimum: 1.0
+        format: int64
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radcheck'
+        404:
+          description: Row not found      
+        500:
+          description: An unexpected error occurred
+    put:
+      tags:
+      - radcheck
+      summary: Update an existing row
+      parameters:
+      - name: id
+        in: path
+        description: ID of radcheck that needs to be updated
+        required: true
+        type: integer
+        minimum: 1.0
+        format: int64
+      - name: body        
+        in: body
+        description: Updated radcheck object
+        required: true        
+        schema:
+          $ref: '#/definitions/radcheck'        
+      responses:
+        200:
+          description: Updated row with ID ${id}
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        404:
+          description: Row with ${id} not founded
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        500:
+          description: An unexpected error occurred
+    delete:
+      tags:
+      - radcheck
+      summary: delete radcheck by id
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: id
+        in: path
+        description: ID of row that needs to be deleted
+        required: true
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        404:
+          description: Row with ${id} not founded
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /radcheck/username/{username}:
+    get:
+      tags:
+      - radcheck
+      summary: Find rows by username
+      parameters:
+      - name: username
+        in: path
+        description: username (case sensitive) of radcheck that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radcheck'
+        404:
+          description: Row not found      
+  /radcheck:
+    post:
+      tags:
+      - radcheck
+      summary: Create row to radcheck
+      parameters:
+      - in: body
+        name: body
+        description: Created radcheck object
+        required: true
+        schema:
+          $ref: '#/definitions/radcheck'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radcheck'  
+  #            
+  # Router users
+  #            
+  /users/username/{username}:      
+    get:
+      tags:
+      - users
+      summary: Serach username on table users
+      parameters:
+      - name: username
+        in: path
+        description: username (case sensitive) of users that needs to be fetched
+        required: true
+        type: string
+        schema:
+          $ref: '#/definitions/users'
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/ApiResponseUsers'
+    put:
+      tags:
+      - users
+      summary: Update an existing row
+      parameters:
+      - name: username
+        in: path
+        description: username of users that needs to be updated
+        required: true
+        type: string
+      - name: body        
+        in: body
+        description: Updated users object
+        required: true        
+        schema:
+          $ref: '#/definitions/users'        
+      responses:
+        200:
+          description: Updated row with username ${username}
+          schema:
+            $ref: '#/definitions/ApiResponse'
+    delete:
+      tags:
+      - users
+      summary: delete users by username
+      parameters:
+      - name: username
+        in: path
+        description: username of row that needs to be deleted
+        required: true
+        type: string
+        schema:
+          $ref: '#/definitions/users'        
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /users/:            
+    post:
+      tags:
+      - users
+      summary: Create row to users
+      parameters:
+      - in: body
+        name: body
+        description: Created users object
+        required: true
+        schema:
+          $ref: '#/definitions/users'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'  
 
   /users/search/username/{username}:      
     get:
       tags:
       - users
       summary: Serach username on table users
-      produces:
-      - application/json
-      - application/xml
       parameters:
       - name: username
         in: path
@@ -167,18 +347,12 @@ paths:
         200:
           description: Successful operation
           schema:
-            $ref: '#/definitions/users'
-        404:
-          description: Row not found   
-  
+            $ref: '#/definitions/ApiResponse'
   /users/search/ip/{ip}:
     get:
       tags:
       - users
       summary: Serach ip on table users or radreply
-      produces:
-      - application/json
-      - application/xml
       parameters:
       - name: ip
         in: path
@@ -192,43 +366,299 @@ paths:
             $ref: '#/definitions/users'
         404:
           description: Row not found         
-          
+
+  #            
+  # Router radacct
+  #   
+  /radacct/username/{username}:      
+    get:
+      tags:
+      - radacct
+      summary: Serach username on table radacct
+      parameters:
+      - name: username
+        in: path
+        description: username (case sensitive) of users that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radacct'
+  
+  /radacct/id/{id}:
+    get:
+      tags:
+      - radacct
+      summary: Serach id on table radacct
+      parameters:
+      - name: id
+        in: path
+        description: id that needs to be fetched
+        required: true
+        type: int
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radacct'
+  /radippool/username/{username}:      
+    get:
+      tags:
+      - radippool
+      summary: Serach username on table radippool
+      parameters:
+      - name: username
+        in: path
+        description: username (case sensitive) of users that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radippool'
+  
+  /radippool/ip/{ip}:
+    get:
+      tags:
+      - radippool
+      summary: Serach ip on table radippool
+      parameters:
+      - name: ip
+        in: path
+        description: ip that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radippool'
+
+  /radpostauth/username/{username}:      
+    get:
+      tags:
+      - radpostauth
+      summary: Serach username on table radpostauth
+      parameters:
+      - name: username
+        in: path
+        description: username (case sensitive) of radpostauth that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radpostauth'
+  
+  /radpostauth/ip/{ip}:
+    get:
+      tags:
+      - radpostauth
+      summary: Serach ip on table users or radpostauth
+      parameters:
+      - name: ip
+        in: path
+        description: ip that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radpostauth'
+
+  #            
+  # Router radmacauth
+  #            
+  /radmacauth/id/{id}:
+    get:
+      tags:
+      - radmacauth
+      summary: Find row by ID
+      description: For valid response try integer IDs with value >= 1. Other values will generated exceptions
+      parameters:
+      - name: id
+        in: path
+        description: ID of radmacauth that needs to be fetched
+        required: true
+        type: integer
+        minimum: 1.0
+        format: int64
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/radmacauth'
+    put:
+      tags:
+      - radmacauth
+      summary: Update an existing row
+      parameters:
+      - name: id
+        in: path
+        description: ID of radmacauth that needs to be updated
+        required: true
+        type: integer
+        minimum: 1.0
+        format: int64
+      - name: body        
+        in: body
+        description: Updated radmacauth object
+        required: true        
+        schema:
+          $ref: '#/definitions/radmacauth'        
+      responses:
+        200:
+          description: Inseted row with ID ${id}
+          schema:
+            $ref: '#/definitions/ApiResponse'
+    delete:
+      tags:
+      - radmacauth
+      summary: delete radmacauth by id
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: id
+        in: path
+        description: ID of row that needs to be updated
+        required: true
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+
+  /radmacauth/username/{username}:
+    get:
+      tags:
+      - radmacauth
+      summary: Find rows by username
+      parameters:
+      - name: username
+        in: path
+        description: username (case sensitive) of radmacauth that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+
+  /radmacauth/macaddress/{macaddress}:
+    get:
+      tags:
+      - radmacauth
+      summary: Find rows by macaddress
+      parameters:
+      - name: macaddress
+        in: path
+        description: macaddress (case sensitive) of radmacauth that needs to be fetched
+        required: true
+        type: string
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'            
+
+  /radmacauth:
+    post:
+      tags:
+      - radmacauth
+      summary: Create row to radmacauth
+      parameters:
+      - in: body
+        name: body
+        description: Created radmacauth object
+        required: true
+        schema:
+          $ref: '#/definitions/radmacauth'
+      responses:
+        default:
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'  
+  
+#
+# Definitions
+# 
 definitions:
+
   radreply:
     type: object
     properties:
       id:
         type: integer
-        format: int64
+        required: true
       username:
         type: string
       attribute: 
         type: string
-        example: IP
       op: 
         type: string
+      value: 
+        type: string
+    required:
+    - id      
+    example:        
+      attribute: IP
+      op: '=='
+      value: '10.20.30.40'
+
+  radcheck:
+    type: object
+    properties:
+      id:
+        type: integer
+        required: true
+      username:
+        type: string
+        required: true
+      attribute: 
+        type: string
+        required: true
+      op: 
+        type: string
+        required: true
         enum:
          - '=='
          - '<>'
       value: 
         type: string
-        example: 10.20.30.40 
-    xml:
-      name: radreply
-      
+        required: true
+    required:
+    - id     
+    - username
+    - attribute
+    - op
+    - value
+
   users:
     type: object
     properties:
       username:
         type: string
+        required: true
       userpassword:
         type: string
+        required: true
       status: 
         type: string
+        required: true
       provideridentification:
         type: string
+        required: true
       ipaddresstype:
         type: string
+        required: true
       accesstype:
         type: string
       servicecode:
@@ -256,21 +686,207 @@ definitions:
           type: string
       requestsource:
         type: string
-    example:
+    exxample:
       useranme: 'VF-'
       staus: 'ACTIVE'
       provideridentification: 'CETIN'
       ipaddresstype: 'STATIC'
-        
+
+  radacct:
+    type: object      
+    properties:
+      radacctid:
+        type: integer
+        format: int64
+        required: true
+      acctsessionid:
+        type: string
+        required: true
+      acctuniqueid:
+        type: string
+        required: true
+      username:
+        type: string
+      groupname:
+        type: string
+      realm:
+        type: string
+      nasipaddress:
+        type: string
+        required: true
+      nasportid:
+        type: string
+      nasporttype:
+        type: string
+      acctstarttime:
+        type: string
+      acctupdatetime:
+        type: string
+      acctstoptime:
+        type: string
+      acctinterval:
+        type: integer
+        format: int64
+      acctsessiontime:
+        type: integer
+        format: int64
+      acctauthentic:
+        type: string
+      connectinfo_start:
+        type: string
+      connectinfo_stop:
+        type: string
+      acctinputoctets:
+        type: integer
+        format: int64
+        required: true
+      acctoutputoctets:
+        type: integer
+        format: int64
+        required: true
+      calledstationid:
+        type: string
+      callingstationid:
+        type: string
+      acctterminatecause:
+        type: string
+      servicetype:
+        type: string
+      framedprotocol:
+        type: string
+      framedipaddress:
+        type: string
+  
+  radippool:
+    type: object      
+    properties:
+      id:
+        type: integer
+        format: int64
+        required: true
+      pool_name:
+        type: string
+      framedipaddress:
+        type: string
+      nasipaddress:
+        type: string
+      pool_key:
+        type: string
+      calledstationid:
+        type: string
+      callingstationid:
+        type: string
+      expiry_time:
+        type: string
+      username:
+        type: string
+
+  radpostauth:
+    type: object      
+    properties:
+      id:
+        type: integer
+        format: int64
+        required: true
+      username:
+        type: string
+        required: true
+      pass:
+        type: string
+      reply:
+        type: string
+      calledstationid:
+        type: string
+      callingstationid:
+        type: string
+      authdate:
+        type: string
+        required: true
+
+  radmacauth:
+    type: object      
+    properties:
+      id:
+        type: integer
+        required: true
+      username:
+        type: string
+        required: true
+      macaddress:
+        type: string
+        required: true
+      creationdate:
+        type: string
+        required: true
+
   ApiResponse:
     type: object
     properties:
       status:
         type: string
-        format: int32
       message:
         type: string
       data:
         type: object
 
+  ApiResponseUsers:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      data:
+        $ref: '#/definitions/users'
 
+  ErrorModel:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+      error:
+        type: string
+
+
+securityDefinitions:
+  basicAuth:
+    type: "basic"
+#
+# To apply Basic auth to the whole API:
+#
+security:
+  - basicAuth: []   
+
+responses:
+  UnauthorizedError:
+    description: Authentication information is missing or invalid
+    headers:
+      WWW_Authenticate:
+        type: string
+
+components:
+  parameters:
+    offsetParam:      # Can be referenced via '#/components/parameters/offsetParam'
+      name: offset
+      in: query
+      description: Number of items to skip before returning the results.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+        default: 0
+  #-------------------------------
+  # Reusable responses
+  #-------------------------------
+  responses:
+    404NotFound:       # Can be referenced as '#/components/responses/404NotFound'
+      description: The specified resource was not found.                
+    GenericError:      # Can be referenced as '#/components/responses/GenericError'
+      description: An error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'      
