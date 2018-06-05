@@ -37,7 +37,7 @@ var server = (URL.protocol === 'https:')
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(URL.port, URL.hostname, (ser) => {
+server.listen(URL.port, URL.hostname, () => {
     console.log(`JEDME na ${URL.href}`);
 });
 

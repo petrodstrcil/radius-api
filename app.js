@@ -15,9 +15,6 @@ const createError = require('http-errors');
 const express = require('express');
 const morganBody = require('morgan-body');
 
-const path = require('path');
-const url = require('url');
-
 //logger = require('morgan'),
 //bodyParser = require('body-parser'),
 
@@ -61,7 +58,7 @@ app.use(function(req, res, next) {
 
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
   // set locals, only providing error in development
     res.locals.message = err.message;
     //res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -89,7 +86,7 @@ function notFound (message, errorCode) {
     this.message = message || 'The requested resource couldn\'t be found';
     this.statusCode = 404;
     this.errorCode = errorCode || 404;
-};
+}
 
 /**
  * Module exports.
